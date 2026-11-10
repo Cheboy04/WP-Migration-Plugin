@@ -83,6 +83,11 @@ class Ai1wm_Status {
 	public static function log( $data ) {
 		global $ai1wm_params;
 
+		// Mindsoft: echo progress to the terminal when running under WP-CLI
+		if ( defined( 'WP_CLI' ) && ! empty( $data['message'] ) ) {
+			WP_CLI::log( trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $data['message'] ) ) ) );
+		}
+
 		// Job-scoped write (when job_id is set, e.g. REST API or any pipeline with storage)
 		if ( self::$job_id !== null ) {
 			$job_data = $data;

@@ -82,8 +82,11 @@ class Ai1wm_Import_Upload {
 			);
 		}
 
-		// Verify file data
-		if ( ! ai1wm_is_filedata_supported( $upload_tmp_name ) ) {
+		// Mindsoft: chunked upload, each request carries the byte offset of its chunk
+		$chunk_offset = isset( $params['chunk_offset'] ) ? max( 0, (int) $params['chunk_offset'] ) : 0;
+
+		// Verify file data (only the first chunk contains the archive header)
+		if ( $chunk_offset === 0 && ! ai1wm_is_filedata_supported( $upload_tmp_name ) ) {
 			throw new Ai1wm_Upload_Exception(
 				wp_kses(
 					__(
@@ -101,7 +104,8 @@ class Ai1wm_Import_Upload {
 		switch ( $upload_error ) {
 			case UPLOAD_ERR_OK:
 				try {
-					ai1wm_copy( $upload_tmp_name, ai1wm_archive_path( $params ) );
+					// Writing at an explicit offset makes a retried chunk overwrite itself instead of duplicating
+					ai1wm_copy( $upload_tmp_name, ai1wm_archive_path( $params ), $chunk_offset );
 					ai1wm_unlink( $upload_tmp_name );
 				} catch ( Exception $e ) {
 					/* translators: Error message. */

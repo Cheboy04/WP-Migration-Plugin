@@ -265,7 +265,7 @@ class Ai1wm_Main_Controller {
 	 */
 	public function cli_init() {
 		if ( defined( 'WP_CLI' ) && count( Ai1wm_Extensions::get() ) === 0 ) {
-			WP_CLI::add_command( 'ai1wm', 'Ai1wm_WP_CLI_Command', array( 'shortdesc' => __( 'All-in-One WP Migration Command', 'all-in-one-wp-migration' ) ) );
+			WP_CLI::add_command( 'ai1wm', 'Ai1wm_WP_CLI_Command', array( 'shortdesc' => __( 'Mindsoft WP Migration: export, import and restore .wpress backups', 'all-in-one-wp-migration' ) ) );
 		}
 	}
 
@@ -946,8 +946,10 @@ class Ai1wm_Main_Controller {
 			'ai1wm_import',
 			'ai1wm_uploader',
 			array(
-				// Mindsoft: uploads are chunked (AI1WM_MAX_CHUNK_SIZE), so the host limit doesn't apply to the whole file
+				// Mindsoft: the uploader sends the file in chunks, so only each chunk must fit the host limits.
+				// 10% headroom for the multipart overhead when post_max_size is the smallest limit.
 				'max_file_size' => PHP_INT_MAX,
+				'chunk_size'    => (int) floor( apply_filters( 'ai1wm_max_chunk_size', AI1WM_MAX_CHUNK_SIZE ) * 0.9 ),
 				'url'           => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1, 'ai1wm_manual_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wm_import' ) ) ),
 				'params'        => array(
 					'priority'   => 5,
@@ -1131,7 +1133,7 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function enqueue_import_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_ai1wm_import', $hook ) === false ) {
+		if ( stripos( 'mindsoft-wp-migration_page_ai1wm_import', $hook ) === false ) {
 			return;
 		}
 
@@ -1153,7 +1155,7 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function enqueue_backups_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_ai1wm_backups', $hook ) === false ) {
+		if ( stripos( 'mindsoft-wp-migration_page_ai1wm_backups', $hook ) === false ) {
 			return;
 		}
 
@@ -1166,6 +1168,13 @@ class Ai1wm_Main_Controller {
 		// Load scripts and styles
 		ai1wm_enqueue_style( 'ai1wm_backups' );
 		ai1wm_enqueue_script( 'ai1wm_backups' );
+
+		// Mindsoft: restore a backup in place. The import pipeline already reads the archive
+		// from the backups folder when ai1wm_manual_restore is set; this just starts it.
+		wp_add_inline_script(
+			'ai1wm_backups',
+			'Ai1wm.FreeExtensionRestore=function(archive,size){var m=new Ai1wm.Import();m.setParams([{name:"storage",value:Ai1wm.Util.random(12)},{name:"archive",value:archive},{name:"ai1wm_manual_restore",value:1}]);m.checkDiskSpace(size,function(){m.start();});};'
+		);
 	}
 
 	/**
@@ -1175,7 +1184,7 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function enqueue_schedules_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_ai1wm_schedules', $hook ) === false ) {
+		if ( stripos( 'mindsoft-wp-migration_page_ai1wm_schedules', $hook ) === false ) {
 			return;
 		}
 
@@ -1197,7 +1206,7 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function enqueue_reset_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_ai1wm_reset', $hook ) === false ) {
+		if ( stripos( 'mindsoft-wp-migration_page_ai1wm_reset', $hook ) === false ) {
 			return;
 		}
 
