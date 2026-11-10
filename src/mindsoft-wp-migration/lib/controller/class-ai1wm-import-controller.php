@@ -322,11 +322,12 @@ class Ai1wm_Import_Controller {
 			$static_filters[] = apply_filters( 'ai1wm_import_glacier', Ai1wm_Template::get_content( 'import/button-glacier' ) );
 		}
 
-		return array_merge( $active_filters, $static_filters );
+		// Mindsoft: drop links to paid extensions that aren't installed
+		return $active_filters;
 	}
 
 	public static function pro() {
-		return Ai1wm_Template::get_content( 'import/pro' );
+		return '';
 	}
 
 	public static function max_chunk_size() {

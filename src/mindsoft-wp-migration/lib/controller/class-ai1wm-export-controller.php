@@ -287,7 +287,8 @@ class Ai1wm_Export_Controller {
 			$static_filters[] = apply_filters( 'ai1wm_export_glacier', Ai1wm_Template::get_content( 'export/button-glacier' ) );
 		}
 
-		return array_merge( $active_filters, $static_filters );
+		// Mindsoft: drop links to paid extensions that aren't installed
+		return $active_filters;
 	}
 
 	public static function cleanup() {

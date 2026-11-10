@@ -692,11 +692,6 @@ class Ai1wm_Main_Controller {
 	 * @return array
 	 */
 	public function plugin_row_meta( $links, $file ) {
-		if ( $file === AI1WM_PLUGIN_BASENAME ) {
-			$links[] = Ai1wm_Template::get_content( 'main/contact-support' );
-			$links[] = Ai1wm_Template::get_content( 'main/translate' );
-		}
-
 		return $links;
 	}
 
@@ -707,8 +702,8 @@ class Ai1wm_Main_Controller {
 	 */
 	public function admin_menu() {
 		add_menu_page(
-			'All-in-One WP Migration',
-			'All-in-One WP Migration',
+			'Mindsoft WP Migration',
+			'Mindsoft WP Migration',
 			'ai1wm_export_site',
 			'ai1wm_export',
 			'Ai1wm_Export_Controller::index',
@@ -742,26 +737,6 @@ class Ai1wm_Main_Controller {
 			'ai1wm_backups',
 			'Ai1wm_Backups_Controller::index'
 		);
-
-		if ( ! ( defined( 'AI1WMVE_PATH' ) || defined( 'AI1WMKE_PATH' ) || defined( 'AI1WMME_PATH' ) || defined( 'AI1WMUE_PATH' ) ) ) {
-			add_submenu_page(
-				'ai1wm_export',
-				__( 'Reset Hub', 'all-in-one-wp-migration' ),
-				__( 'Reset Hub', 'all-in-one-wp-migration' ) . Ai1wm_Template::get_content( 'main/premium-badge' ),
-				'ai1wm_export_site',
-				'ai1wm_reset',
-				'Ai1wm_Reset_Controller::index'
-			);
-
-			add_submenu_page(
-				'ai1wm_export',
-				__( 'Schedules', 'all-in-one-wp-migration' ),
-				__( 'Schedules', 'all-in-one-wp-migration' ) . Ai1wm_Template::get_content( 'main/premium-badge' ),
-				'ai1wm_export_site',
-				'ai1wm_schedules',
-				'Ai1wm_Schedules_Controller::index'
-			);
-		}
 	}
 
 	/**
@@ -804,21 +779,8 @@ class Ai1wm_Main_Controller {
 
 		$upload_limit_text = sprintf(
 			/* translators: 1: Max upload file size */
-			__(
-				'Your file exceeds the <strong>%1$s</strong> upload limit set by your host.<br />%2$s<br />%3$s',
-				'all-in-one-wp-migration'
-			),
-			esc_html( ai1wm_size_format( wp_max_upload_size() ) ),
-			sprintf(
-				/* translators: Link to Unlimited Extension */
-				__( 'Our <a href="%s" target="_blank">Unlimited Extension</a> bypasses this!', 'all-in-one-wp-migration' ),
-				'https://servmask.com/products/unlimited-extension?utm_source=file-import&utm_medium=plugin&utm_campaign=ai1wm'
-			),
-			sprintf(
-				/* translators: Link to how to article */
-				__( 'If you prefer a manual fix, follow our step-by-step guide on <a href="%s" target="_blank">raising your upload limit</a>.', 'all-in-one-wp-migration' ),
-				'https://help.servmask.com/2018/10/27/how-to-increase-maximum-upload-file-size-in-wordpress/'
-			)
+			__( 'Your file exceeds the <strong>%1$s</strong> upload limit set by your host.', 'all-in-one-wp-migration' ),
+			esc_html( ai1wm_size_format( wp_max_upload_size() ) )
 		);
 
 		wp_localize_script(
@@ -876,23 +838,7 @@ class Ai1wm_Main_Controller {
 				'upload_failed'                       => __( 'Upload failed', 'all-in-one-wp-migration' ),
 				/* translators: Disk space to free up. */
 				'out_of_disk_space'                   => __( 'Not enough disk space.<br /> Free up %s before restoring.', 'all-in-one-wp-migration' ),
-				'file_too_large'                      => sprintf(
-					/* translators: 1: Link to Unlimited Extension, 2: Link to how to article */
-					__(
-						'Your file exceeds the upload limit set by your host web server.<br />%1$s<br />%2$s',
-						'all-in-one-wp-migration'
-					),
-					sprintf(
-						/* translators: Link to Unlimited Extension */
-						__( 'Our <a href="%s" target="_blank">Unlimited Extension</a> bypasses this!', 'all-in-one-wp-migration' ),
-						'https://servmask.com/products/unlimited-extension?utm_source=file-upload-webserver&utm_medium=plugin&utm_campaign=ai1wm'
-					),
-					sprintf(
-						/* translators: Link to how to article */
-						__( 'If you prefer a manual fix, follow our step-by-step guide on <a href="%s" target="_blank">raising your upload limit</a>.', 'all-in-one-wp-migration' ),
-						'https://help.servmask.com/2018/10/27/how-to-increase-maximum-upload-file-size-in-wordpress/'
-					)
-				),
+				'file_too_large'                      => __( 'Your file exceeds the upload limit set by your host web server (e.g. nginx client_max_body_size).', 'all-in-one-wp-migration' ),
 				'import_from_file'                    => $upload_limit_text,
 				'invalid_archive_extension'           => __(
 					'Invalid file type. Please ensure that your file is a <strong>.wpress</strong> file created with All-in-One WP Migration.
@@ -907,12 +853,8 @@ class Ai1wm_Main_Controller {
 				'want_to_delete_selected_plural'      => __( 'Are you sure you want to delete %d selected backups?', 'all-in-one-wp-migration' ),
 				'delete_selected'                     => __( 'Delete (%d selected)', 'all-in-one-wp-migration' ),
 				'session_expired'                     => __( 'Your session has expired. The page will reload so you can log in again.', 'all-in-one-wp-migration' ),
-				'unlimited'                           => __( 'Backup restore requires the Unlimited Extension. <a href="https://servmask.com/products/unlimited-extension" target="_blank">Get it here</a>', 'all-in-one-wp-migration' ),
-				'restore_from_file'                   => sprintf(
-					/* translators: 1: Link to Unlimited Extension */
-					__( '"Restore" functionality is available in our <a href="%s" target="_blank">Unlimited Extension</a>.<br /> If you would rather go the manual route, you can still restore by downloading your backup and using "Import from file".', 'all-in-one-wp-migration' ),
-					'https://servmask.com/products/unlimited-extension?utm_source=restore-from-file&utm_medium=plugin&utm_campaign=ai1wm'
-				),
+				'unlimited'                           => __( 'To restore this backup, download it and use "Import from file".', 'all-in-one-wp-migration' ),
+				'restore_from_file'                   => __( 'To restore this backup, download it and use "Import from file".', 'all-in-one-wp-migration' ),
 				'archive_browser_error'               => __( 'Error', 'all-in-one-wp-migration' ),
 				'archive_browser_list_error'          => __( 'Could not read backup content', 'all-in-one-wp-migration' ),
 				'archive_browser_title'               => __( 'List the content of the backup', 'all-in-one-wp-migration' ),
@@ -1004,7 +946,8 @@ class Ai1wm_Main_Controller {
 			'ai1wm_import',
 			'ai1wm_uploader',
 			array(
-				'max_file_size' => wp_max_upload_size(),
+				// Mindsoft: uploads are chunked (AI1WM_MAX_CHUNK_SIZE), so the host limit doesn't apply to the whole file
+				'max_file_size' => PHP_INT_MAX,
 				'url'           => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1, 'ai1wm_manual_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wm_import' ) ) ),
 				'params'        => array(
 					'priority'   => 5,

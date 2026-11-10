@@ -34,13 +34,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="ai1wm-sidebar">
 		<div class="ai1wm-segment">
 
-			<?php if ( ! AI1WM_DEBUG ) : ?>
-				<?php require_once AI1WM_TEMPLATES_PATH . '/common/share-buttons.php'; ?>
-			<?php endif; ?>
-
-			<h2><?php esc_html_e( 'Leave Feedback', 'all-in-one-wp-migration' ); ?></h2>
-			<?php require_once AI1WM_TEMPLATES_PATH . '/common/leave-feedback.php'; ?>
-
 			<?php do_action( 'ai1wm_sidebar_right_end' ); ?>
 
 		</div>

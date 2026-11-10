@@ -52,29 +52,7 @@ class Ai1wm_Import_Confirm {
 		ai1wm_close( $handle );
 
 		// Confirm message
-		if ( defined( 'WP_CLI' ) ) {
-			$messages[] = sprintf(
-				/* translators: Link to Unlimited Extension */
-				__(
-					'Importing this file will only replace matching content. Other items stay unchanged.
-					Need a full reset first? Try Reset Hub in our Unlimited Extension (%s).
-					Ensure you have a current backup. Proceed?',
-					'all-in-one-wp-migration'
-				),
-				'https://servmask.com/products/unlimited-extension'
-			);
-		} else {
-			$messages[] = sprintf(
-				/* translators: Link to Unlimited Extension */
-				__(
-					'Importing this file will only replace matching content. Other items stay unchanged.
-					Need a full reset first? Try Reset Hub in our <a href="%s" target="_blank">Unlimited Extension</a>.<br />
-					Ensure you have a current backup. Proceed?',
-					'all-in-one-wp-migration'
-				),
-				'https://servmask.com/products/unlimited-extension?utm_source=import-confirm&utm_medium=plugin&utm_campaign=ai1wm'
-			);
-		}
+		$messages[] = __( 'Importing this file will only replace matching content. Other items stay unchanged. Ensure you have a current backup. Proceed?', 'all-in-one-wp-migration' );
 
 		// Check compatibility of PHP versions
 		if ( isset( $package['PHP']['Version'] ) ) {

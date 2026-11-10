@@ -91,7 +91,7 @@ class Ai1wm_Import_Done {
 			// Deactivate Swift Optimizer rules
 			ai1wm_deactivate_swift_optimizer_rules(
 				array(
-					ai1wm_discover_plugin_basename( 'all-in-one-wp-migration/all-in-one-wp-migration.php' ),
+					AI1WM_PLUGIN_BASENAME,
 					ai1wm_discover_plugin_basename( 'all-in-one-wp-migration-azure-storage-extension/all-in-one-wp-migration-azure-storage-extension.php' ),
 					ai1wm_discover_plugin_basename( 'all-in-one-wp-migration-b2-extension/all-in-one-wp-migration-b2-extension.php' ),
 					ai1wm_discover_plugin_basename( 'all-in-one-wp-migration-backup/all-in-one-wp-migration-backup.php' ),
@@ -198,7 +198,7 @@ class Ai1wm_Import_Done {
 				// Deactivate Swift Optimizer rules
 				ai1wm_deactivate_swift_optimizer_rules(
 					array(
-						ai1wm_discover_plugin_basename( 'all-in-one-wp-migration/all-in-one-wp-migration.php' ),
+						AI1WM_PLUGIN_BASENAME,
 						ai1wm_discover_plugin_basename( 'all-in-one-wp-migration-azure-storage-extension/all-in-one-wp-migration-azure-storage-extension.php' ),
 						ai1wm_discover_plugin_basename( 'all-in-one-wp-migration-b2-extension/all-in-one-wp-migration-b2-extension.php' ),
 						ai1wm_discover_plugin_basename( 'all-in-one-wp-migration-backup/all-in-one-wp-migration-backup.php' ),
@@ -308,7 +308,7 @@ class Ai1wm_Import_Done {
 				// Deactivate Swift Optimizer rules
 				ai1wm_deactivate_swift_optimizer_rules(
 					array(
-						ai1wm_discover_plugin_basename( 'all-in-one-wp-migration/all-in-one-wp-migration.php' ),
+						AI1WM_PLUGIN_BASENAME,
 						ai1wm_discover_plugin_basename( 'all-in-one-wp-migration-azure-storage-extension/all-in-one-wp-migration-azure-storage-extension.php' ),
 						ai1wm_discover_plugin_basename( 'all-in-one-wp-migration-b2-extension/all-in-one-wp-migration-b2-extension.php' ),
 						ai1wm_discover_plugin_basename( 'all-in-one-wp-migration-backup/all-in-one-wp-migration-backup.php' ),

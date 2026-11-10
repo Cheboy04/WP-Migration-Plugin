@@ -908,14 +908,7 @@ class Ai1wm_Rest_Controller {
 	public static function restore_backup( $request ) {
 		return new WP_Error(
 			'upgrade_required',
-			sprintf(
-				/* translators: 1: Link to Unlimited Extension */
-				__(
-					'"Restore" functionality is available in our Unlimited Extension (%s). If you would rather go the manual route, you can still restore by downloading your backup and using the import endpoint.',
-					'all-in-one-wp-migration'
-				),
-				'https://servmask.com/products/unlimited-extension'
-			),
+			__( 'Restore via REST is not available. Download the backup and use the import endpoint.', 'all-in-one-wp-migration' ),
 			array( 'status' => 403 )
 		);
 	}
@@ -1223,14 +1216,9 @@ class Ai1wm_Rest_Controller {
 	 */
 	private static function upload_limit_message() {
 		return sprintf(
-			/* translators: 1: Max upload file size, 2: Link to Unlimited Extension, 3: Link to how to article */
-			__(
-				'Your file exceeds the %1$s upload limit set by your host. Our Unlimited Extension bypasses this! %2$s. If you prefer a manual fix, follow our step-by-step guide on raising your upload limit: %3$s',
-				'all-in-one-wp-migration'
-			),
-			ai1wm_size_format( wp_max_upload_size() ),
-			'https://servmask.com/products/unlimited-extension',
-			'https://help.servmask.com/2018/10/27/how-to-increase-maximum-upload-file-size-in-wordpress/'
+			/* translators: 1: Max upload file size */
+			__( 'Your file exceeds the %1$s PHP upload limit (upload_max_filesize / post_max_size). Use the browser importer, which uploads in chunks, or raise those PHP limits.', 'all-in-one-wp-migration' ),
+			ai1wm_size_format( wp_max_upload_size() )
 		);
 	}
 }

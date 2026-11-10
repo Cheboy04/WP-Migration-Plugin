@@ -1,17 +1,17 @@
 <?php
 /**
- * Plugin Name: All-in-One WP Migration and Backup
- * Plugin URI: https://servmask.com/
- * Description: All-in-One WP Migration makes moving your entire WordPress site simple. Export or import your database, media, plugins, and themes with just a few clicks.
- * Author: ServMask
- * Author URI: https://servmask.com/
- * Version: 7.113
+ * Plugin Name: Mindsoft WP Migration
+ * Description: Export and import your entire WordPress site (database, media, plugins, themes) without upload size limits.
+ * Author: Mindsoft
+ * Version: 7.113-mindsoft.1
  * Text Domain: all-in-one-wp-migration
  * Domain Path: /languages
  * Network: True
  * License: GPLv3
  *
  * Copyright (C) 2014-2025 ServMask Inc.
+ * Modified by Mindsoft (2026): rebranded, upload size limit and upsell notices removed.
+ * Based on All-in-One WP Migration 7.113. Not affiliated with or endorsed by ServMask.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
