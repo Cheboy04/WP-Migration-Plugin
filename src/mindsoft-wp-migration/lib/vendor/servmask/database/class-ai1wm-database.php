@@ -930,6 +930,9 @@ abstract class Ai1wm_Database {
 					// Get prefix columns
 					$prefix_columns = $this->get_table_prefix_columns( $table_name );
 
+					// Mindsoft: rows per batch, scaled to the table's average row size
+					$select_records = $this->get_table_select_records( $table_name );
+
 					do {
 
 						// Set query
@@ -957,9 +960,9 @@ abstract class Ai1wm_Database {
 
 							// Set query with offset and rows count
 							if ( defined( 'AI1WM_DISABLE_LATE_ROW_LOOKUPS' ) ) {
-								$query = sprintf( 'SELECT %s FROM `%s` AS t1 WHERE %s ORDER BY %s LIMIT %d, %d', $select_columns, $table_name, $table_where, $table_keys, $table_offset, AI1WM_MAX_SELECT_RECORDS );
+								$query = sprintf( 'SELECT %s FROM `%s` AS t1 WHERE %s ORDER BY %s LIMIT %d, %d', $select_columns, $table_name, $table_where, $table_keys, $table_offset, $select_records );
 							} else {
-								$query = sprintf( 'SELECT %s FROM `%s` AS t1 JOIN (SELECT %s FROM `%s` WHERE %s ORDER BY %s LIMIT %d, %d) AS t2 USING (%s)', $select_columns, $table_name, $table_keys, $table_name, $table_where, $table_keys, $table_offset, AI1WM_MAX_SELECT_RECORDS, $table_keys );
+								$query = sprintf( 'SELECT %s FROM `%s` AS t1 JOIN (SELECT %s FROM `%s` WHERE %s ORDER BY %s LIMIT %d, %d) AS t2 USING (%s)', $select_columns, $table_name, $table_keys, $table_name, $table_where, $table_keys, $table_offset, $select_records, $table_keys );
 							}
 						} else {
 
@@ -978,7 +981,7 @@ abstract class Ai1wm_Database {
 							$select_columns = implode( ', ', $select_columns );
 
 							// Set query with offset and rows count
-							$query = sprintf( 'SELECT %s FROM `%s` WHERE %s ORDER BY %s LIMIT %d, %d', $select_columns, $table_name, $table_where, $table_keys, $table_offset, AI1WM_MAX_SELECT_RECORDS );
+							$query = sprintf( 'SELECT %s FROM `%s` WHERE %s ORDER BY %s LIMIT %d, %d', $select_columns, $table_name, $table_where, $table_keys, $table_offset, $select_records );
 						}
 
 						// Run SQL query
@@ -1394,6 +1397,33 @@ abstract class Ai1wm_Database {
 	 */
 	protected function repair_table( $table_name ) {
 		$this->query( "REPAIR TABLE `{$table_name}`" );
+	}
+
+	/**
+	 * Mindsoft: rows per SELECT batch for a table.
+	 *
+	 * Each batch is buffered whole by the client (mysqli_store_result), so 1000 rows
+	 * of a table with large rows (sliders, logs, serialized caches) can exhaust
+	 * memory_limit. Size the batch from the table's average row length instead.
+	 * ponytail: average-based; a table with a few huge rows among small ones can still
+	 * spike, lower AI1WM_MAX_SELECT_BYTES or AI1WM_MAX_SELECT_RECORDS in wp-config then.
+	 *
+	 * @param  string $table_name Table name
+	 * @return integer
+	 */
+	protected function get_table_select_records( $table_name ) {
+		$records = AI1WM_MAX_SELECT_RECORDS;
+
+		$result = $this->query( sprintf( "SELECT `AVG_ROW_LENGTH` FROM `information_schema`.`TABLES` WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = '%s'", $this->escape( $table_name ) ) );
+		if ( $result ) {
+			if ( ( $row = $this->fetch_assoc( $result ) ) && ! empty( $row['AVG_ROW_LENGTH'] ) ) {
+				$records = (int) min( $records, max( 1, floor( AI1WM_MAX_SELECT_BYTES / $row['AVG_ROW_LENGTH'] ) ) );
+			}
+
+			$this->free_result( $result );
+		}
+
+		return $records;
 	}
 
 	/**

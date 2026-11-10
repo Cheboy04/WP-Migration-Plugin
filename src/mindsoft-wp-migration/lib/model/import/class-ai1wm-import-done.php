@@ -348,6 +348,12 @@ class Ai1wm_Import_Done {
 			}
 		}
 
+		// Mindsoft: page/CSS caches copied from the source site hold its absolute URLs
+		// (WP Fastest Cache, Autoptimize, Divi). Drop them so they regenerate with the new URL.
+		foreach ( array( 'cache', 'et-cache' ) as $cache_dir ) {
+			Ai1wm_Directory::delete( WP_CONTENT_DIR . DIRECTORY_SEPARATOR . $cache_dir );
+		}
+
 		// Clear auth cookie (WP Cerber)
 		if ( ai1wm_validate_plugin_basename( 'wp-cerber/wp-cerber.php' ) ) {
 			wp_clear_auth_cookie();

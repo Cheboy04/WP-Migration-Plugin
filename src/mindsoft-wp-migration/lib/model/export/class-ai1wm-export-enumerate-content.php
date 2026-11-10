@@ -52,10 +52,9 @@ class Ai1wm_Export_Enumerate_Content {
 		// Set progress
 		Ai1wm_Status::info( __( 'Gathering content files...', 'all-in-one-wp-migration' ) );
 
-		// Exclude cache
-		if ( isset( $params['options']['no_cache'] ) ) {
-			$exclude_filters[] = 'cache';
-		}
+		// Mindsoft: always exclude regenerable caches; they hold the source site's URLs
+		$exclude_filters[] = 'cache';
+		$exclude_filters[] = 'et-cache';
 
 		// Exclude must-use plugins
 		if ( isset( $params['options']['no_muplugins'] ) ) {

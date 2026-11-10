@@ -493,6 +493,12 @@ if ( ! defined( 'AI1WM_MAX_SELECT_RECORDS' ) ) {
 	define( 'AI1WM_MAX_SELECT_RECORDS', 1000 );
 }
 
+// Mindsoft: target size of one buffered SELECT batch during database export.
+// Tables with large rows get fewer rows per batch so memory_limit isn't exhausted.
+if ( ! defined( 'AI1WM_MAX_SELECT_BYTES' ) ) {
+	define( 'AI1WM_MAX_SELECT_BYTES', 16 * 1024 * 1024 );
+}
+
 // =======================
 // = Max Storage Cleanup =
 // =======================

@@ -912,8 +912,10 @@ class Ai1wm_Main_Controller {
 				'status'          => array(
 					'url' => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1, 'secret_key' => get_option( AI1WM_SECRET_KEY ) ), admin_url( 'admin-ajax.php?action=ai1wm_status' ) ) ),
 				),
+				// Mindsoft: the JS builds the "View Error Log" link as storage.url + "/" + log name.
+				// Serve it through admin-ajax, since many hosts (nginx/Plesk) deny the storage folder.
 				'storage'         => array(
-					'url' => AI1WM_STORAGE_URL,
+					'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_error_log&file=' ) ),
 				),
 				'error_log'       => array(
 					'pattern' => AI1WM_ERROR_NAME,
@@ -921,6 +923,26 @@ class Ai1wm_Main_Controller {
 				'secret_key'      => get_option( AI1WM_SECRET_KEY ),
 			)
 		);
+	}
+
+	/**
+	 * Mindsoft: output an export/import error log to users who can run them
+	 *
+	 * @return void
+	 */
+	public static function error_log() {
+		$file = isset( $_GET['file'] ) ? ai1wm_basename( wp_unslash( $_GET['file'] ) ) : '';
+
+		// Only the plugin's own error logs: error-log-<nonce>.log in the storage folder
+		if ( ! preg_match( '/^' . str_replace( '%s', '[A-Za-z0-9]+', preg_quote( AI1WM_ERROR_NAME, '/' ) ) . '$/', $file ) || ! is_file( AI1WM_STORAGE_PATH . DIRECTORY_SEPARATOR . $file ) ) {
+			status_header( 404 );
+			exit;
+		}
+
+		nocache_headers();
+		header( 'Content-Type: text/plain; charset=utf-8' );
+		readfile( AI1WM_STORAGE_PATH . DIRECTORY_SEPARATOR . $file );
+		exit;
 	}
 
 	/**
@@ -1318,6 +1340,7 @@ class Ai1wm_Main_Controller {
 
 		if ( current_user_can( 'ai1wm_export_site' ) || current_user_can( 'ai1wm_import_site' ) ) {
 			add_action( 'wp_ajax_ai1wm_backup_download_backup', 'Ai1wm_Backups_Controller::download_backup' );
+			add_action( 'wp_ajax_ai1wm_error_log', 'Ai1wm_Main_Controller::error_log' );
 		}
 	}
 
